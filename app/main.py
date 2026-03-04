@@ -1,10 +1,32 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 import models, schemas, auth, dependencies, notes, database
 
 app = FastAPI(title="Notes CRUD API")
+
+# Define the origins of your local frontend apps
+origins = [
+    "http://localhost:5500",   # VS Code Live Server
+    "http://127.0.0.1:5500",   # VS Code Live Server (IP version)
+    "https://www.example.com",
+    "https://example.com",
+]
+
+# Testing script: Goto  inspect -> Console
+# Paste: fetch("http://127.0.0.1:8000/notes/")
+#   .then(res => console.log("Success! Status:", res.status))
+#   .catch(err => console.error("Blocked by CORS:", err));
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include the notes router
 app.include_router(notes.router)

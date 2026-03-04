@@ -11,7 +11,7 @@ class UserCreate(BaseModel):
 class UserOut(BaseModel):
     id: int
     email: EmailStr
-    role: UserRole # Show the user their role in the response
+    role: UserRole
 
     class Config:
         from_attributes = True
