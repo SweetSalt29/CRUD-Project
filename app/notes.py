@@ -12,7 +12,7 @@ async def create_note(
     db: AsyncSession = Depends(dependencies.get_db), 
     current_user: models.User = Depends(dependencies.get_current_user)
 ):
-    """Creates a note linked to the authenticated user."""
+    """Creates a note. Both teachers and students create notes for themselves."""
     new_note = models.Note(**note.model_dump(), user_id=current_user.id)
     db.add(new_note)
     await db.commit()
@@ -24,10 +24,18 @@ async def read_notes(
     db: AsyncSession = Depends(dependencies.get_db), 
     current_user: models.User = Depends(dependencies.get_current_user)
 ):
-    """Retrieves only the notes belonging to the authenticated user."""
-    result = await db.execute(
-        select(models.Note).where(models.Note.user_id == current_user.id)
-    )
+    """
+    Teachers can see all notes in the system. 
+    Students can only see their own.
+    """
+    if current_user.role == models.UserRole.TEACHER:
+        # Teachers fetch everything
+        query = select(models.Note)
+    else:
+        # Students fetch only their own
+        query = select(models.Note).where(models.Note.user_id == current_user.id)
+    
+    result = await db.execute(query)
     return result.scalars().all()
 
 @router.put("/{note_id}", response_model=schemas.NoteOut)
@@ -37,15 +45,18 @@ async def update_note(
     db: AsyncSession = Depends(dependencies.get_db), 
     current_user: models.User = Depends(dependencies.get_current_user)
 ):
-    """Updates a specific note after verifying ownership."""
+    """Updates a note if the user is a teacher OR the owner."""
     result = await db.execute(select(models.Note).where(models.Note.id == note_id))
     db_note = result.scalars().first()
 
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
     
-    # Ownership Check: Crucial for security
-    if db_note.user_id != current_user.id:
+    # Permission Logic: Allow if user is a teacher OR the original owner
+    is_teacher = current_user.role == models.UserRole.TEACHER
+    is_owner = db_note.user_id == current_user.id
+
+    if not (is_teacher or is_owner):
         raise HTTPException(status_code=403, detail="Not authorized to update this note")
 
     db_note.title = note_update.title
@@ -61,15 +72,18 @@ async def delete_note(
     db: AsyncSession = Depends(dependencies.get_db), 
     current_user: models.User = Depends(dependencies.get_current_user)
 ):
-    """Deletes a specific note after verifying ownership."""
+    """Deletes a note if the user is a teacher OR the owner."""
     result = await db.execute(select(models.Note).where(models.Note.id == note_id))
     db_note = result.scalars().first()
 
     if not db_note:
         raise HTTPException(status_code=404, detail="Note not found")
 
-    # Ownership Check
-    if db_note.user_id != current_user.id:
+    # Permission Logic: Allow if user is a teacher OR the original owner
+    is_teacher = current_user.role == models.UserRole.TEACHER
+    is_owner = db_note.user_id == current_user.id
+
+    if not (is_teacher or is_owner):
         raise HTTPException(status_code=403, detail="Not authorized to delete this note")
 
     await db.delete(db_note)

@@ -1,13 +1,18 @@
 from pydantic import BaseModel, EmailStr, Field
 from typing import Optional
+from models import UserRole # Import the Enum for validation
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8)
+    # Allows users to choose a role, defaults to student
+    role: UserRole = UserRole.STUDENT 
 
 class UserOut(BaseModel):
     id: int
     email: EmailStr
+    role: UserRole # Show the user their role in the response
+
     class Config:
         from_attributes = True
 
@@ -21,5 +26,6 @@ class NoteCreate(NoteBase):
 class NoteOut(NoteBase):
     id: int
     user_id: int
+    
     class Config:
         from_attributes = True
