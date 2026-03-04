@@ -1,0 +1,18 @@
+# Python environment
+crud_venv/
+env/
+.env
+__pycache__/
+*.py[cod]
+
+# Databases
+*.db
+*.sqlite3
+
+# IDEs
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
