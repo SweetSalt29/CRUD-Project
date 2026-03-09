@@ -8,7 +8,7 @@ from models import User
 from auth import SECRET_KEY, ALGORITHM
 
 # This matches the login route in main.py
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 async def get_db():
     """

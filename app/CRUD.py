@@ -4,7 +4,7 @@ from sqlalchemy.future import select
 from typing import List
 import schemas, models, dependencies
 
-router = APIRouter(prefix="/notes", tags=["Notes"])
+router = APIRouter(prefix="/CRUD", tags=["CRUD"])
 
 @router.post("/", response_model=schemas.NoteOut, status_code=status.HTTP_201_CREATED)
 async def create_note(

@@ -7,10 +7,20 @@ load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# echo=True allows you to see the generated SQL in your terminal (great for debugging)
-engine = create_async_engine(DATABASE_URL, echo=True)
+## For PostgreSQL, we remove 'check_same_thread' (which was only for SQLite)
+engine = create_async_engine(
+    DATABASE_URL, 
+    echo=True,
+    pool_size=10,         # Keeps 10 connections open for faster response
+    max_overflow=20       # Allows 20 extra connections during heavy traffic
+)
 
-SessionLocal = async_sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
+SessionLocal = async_sessionmaker(
+    autocommit=False, 
+    autoflush=False, 
+    bind=engine, 
+    class_=AsyncSession
+)
 
 class Base(DeclarativeBase):
     """Base class for all database models."""
