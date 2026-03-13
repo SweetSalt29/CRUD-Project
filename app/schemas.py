@@ -1,10 +1,9 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
-from models import UserRole # Import the Enum for validation
+from .models import UserRole
 
 class UserCreate(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8)
+    password: str = Field(min_length=4)
     # Allows users to choose a role, defaults to student
     role: UserRole = UserRole.STUDENT 
 

@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-import models, schemas, auth, dependencies, CRUD, database
+from . import models, schemas, auth, dependencies, CRUD, database
 
 app = FastAPI(title="CRUD API Project (Notes App)")
 

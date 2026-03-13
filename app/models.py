@@ -1,7 +1,12 @@
 import enum
-from sqlalchemy import String, ForeignKey, Text, Enum
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from database import Base
+from sqlalchemy import String, ForeignKey, Text, Enum   # Database column types
+from sqlalchemy.orm import Mapped, mapped_column, relationship  # Syntax for defining columns
+"""
+mapped provides type hinting
+mapped_column sets database constraints
+relationship handles the logic of connecting tables
+"""
+from .database import Base
 from typing import List
 
 # Define the Roles using an Enum
@@ -9,7 +14,7 @@ class UserRole(str, enum.Enum):
     TEACHER = "teacher"
     STUDENT = "student"
 
-class User(Base):
+class User(Base):   
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -18,7 +23,7 @@ class User(Base):
     # Add the Role column 
     role: Mapped[UserRole] = mapped_column(
         Enum(UserRole), 
-        default=UserRole.STUDENT, #(defaulting to Student for safety)
+        default=UserRole.STUDENT, #defaulting to Student
         nullable=False
     )
     # Relationship to Notes
