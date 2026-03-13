@@ -10,7 +10,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 # PostgreSQL
 engine = create_async_engine(
     DATABASE_URL, 
-    echo=True,            # For printing SQL queries on terminal
     pool_size=10,         # Keeps 10 connections open for faster response
     max_overflow=20       # Allows 20 extra connections during heavy traffic
 )

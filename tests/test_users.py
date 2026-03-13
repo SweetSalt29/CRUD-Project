@@ -16,7 +16,7 @@ def test_register_user():
         "/register",
         json={
             "username": "Aaryan",
-            "email": "aaryan@gmail.com",
+            "email": "aaryan@example.com",
             "password": "Password1"
         }
     )
@@ -38,7 +38,7 @@ def test_login_user():
     response = client.post(
         "/login",
         json={
-            "username": "Michelle",
+            "username": "Aaryan",
             "password": "Password1"
         }
     )
@@ -65,7 +65,7 @@ def test_password_min_length():
         json={
             "username": "riya",
             "email": "riya@gmail.com",
-            "password": "1234"
+            "password": "abcD5"
         }
     )
  
